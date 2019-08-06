@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./crypto-js.min.js"></script>
+
+    <script>
+        var header = {
+            "alg": "HS256",
+            "typ": "JWT"
+        };
+        var payload = {
+            "sub": "1234567890",
+            "name": "John Doe",
+            "iat": 1516239022
+        };
+        var secret = 'your-256-bit-secret';
+        function base64UrlEncod(jsonData) {
+            return CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(JSON.stringify(jsonData))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+        }
+        function getSignature(base64UrlHeader, base64URLPayLoad, secret) {
+            return CryptoJS.enc.Base64.stringify(CryptoJS.enc.Hex.parse(CryptoJS.HmacSHA256(base64UrlHeader + "." + base64URLPayLoad, secret).toString())).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+        }
+        function getHS256JWT(header, payLoad, secret) {
+            var base64UrlHeader = base64UrlEncod(header);
+            var base64URLPayLoad = base64UrlEncod(payLoad);
+            var signature = getSignature(base64UrlHeader, base64URLPayLoad, secret)
+            return base64UrlHeader + '.' + base64URLPayLoad + '.' + signature
+        }
+        console.log(getHS256JWT(header, payload, secret))
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
